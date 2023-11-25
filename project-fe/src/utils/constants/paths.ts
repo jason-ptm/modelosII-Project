@@ -20,16 +20,20 @@ export default {
     slug: 'form',
     absolutePath: `${studentPath}/form`,
   },
+  STUDENT_REGISTER_FORM: {
+    slug: 'register',
+    absolutePath: `${studentPath}/register`,
+  },
   STUDENT_HOME: {
-    slug: 'form',
-    absolutePath: `${studentPath}/:id/home`,
+    slug: 'home',
+    absolutePath: `${studentPath}/home`,
   },
   STUDENT_TEAM: {
     slug: 'team',
-    absolutePath: `${studentPath}/:id/team`,
+    absolutePath: `${studentPath}/team`,
   },
   STUDENT_COMPETITIONS: {
     slug: 'competitions',
-    absolutePath: `${studentPath}/:id/competitions`,
+    absolutePath: `${studentPath}/competitions`,
   },
 }

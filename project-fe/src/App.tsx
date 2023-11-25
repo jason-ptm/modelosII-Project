@@ -9,8 +9,9 @@ import { CompetitionsList } from './components'
 import AdminAuthLayout from './containers/adminAuthLayout/AdminAuthLayout'
 import StudentAuthLayout from './containers/studentAuthLayout/StudenteAuthLayout'
 import { CompetitionDetails, TeamsList } from './pages/admin'
-import { Form, Home, TeamDetails } from './pages/student'
+import { ConsultForm, Home, TeamForm, TeamDetails } from './pages/student'
 import paths, { adminPath, studentPath } from './utils/constants/paths'
+import RedirectComponent from './components/RedirectComponent/RedirectComponent'
 
 function App() {
   return (
@@ -35,9 +36,22 @@ function App() {
             <Route path={paths.ADMIN_TEAMS.slug} element={<TeamsList />} />
           </Route>
 
-          <Route path={paths.STUDENT_FORM.absolutePath} element={<Form />} />
+          <Route
+            path={paths.STUDENT_FORM.absolutePath}
+            element={<ConsultForm />}
+          />
+
+          <Route
+            path={paths.STUDENT_REGISTER_FORM.absolutePath}
+            element={<TeamForm />}
+          />
 
           <Route path={studentPath} element={<StudentAuthLayout />}>
+            <Route
+              path=""
+              element={<Navigate to={paths.STUDENT_HOME.slug} />}
+            />
+
             <Route path={paths.STUDENT_HOME.slug} element={<Home />} />
 
             <Route path={paths.STUDENT_TEAM.slug} element={<TeamDetails />} />
@@ -50,6 +64,7 @@ function App() {
 
           <Route path="*" element={<Navigate to={studentPath} />} />
         </Routes>
+        <RedirectComponent />
       </Router>
     </div>
   )
