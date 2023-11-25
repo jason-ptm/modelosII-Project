@@ -9,7 +9,8 @@ export default class StudentService extends ApiService {
     return data
   }
   registerTeam = async (team: Student[]) => {
-    const { data } = await this.axios.put('', team)
-    return data
+    // const { data } = await this.axios.put('', team)
+    // return data
+    return team
   }
 }

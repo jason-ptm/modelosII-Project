@@ -1,9 +1,8 @@
 import { FC, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useLocation } from 'react-router-dom'
-import { RootState } from '../../redux/store'
-import { useDispatch } from 'react-redux'
 import { redirectRoute } from '../../redux/slice/studentReducer'
+import { RootState } from '../../redux/store'
 
 const RedirectComponent: FC<any> = () => {
   const { urlToRedirect } = useSelector((state: RootState) => state.student)
@@ -13,11 +12,12 @@ const RedirectComponent: FC<any> = () => {
   const [url, setUrl] = useState(urlToRedirect)
 
   useEffect(() => {
-    if (url !== location.pathname) setUrl(urlToRedirect)
+    if (urlToRedirect !== location.pathname && urlToRedirect.trim().length > 0)
+      setUrl(urlToRedirect)
     else dispatch(redirectRoute(''))
   }, [urlToRedirect])
 
-  return url ? <Navigate to={url} /> : <></>
+  return url.trim().length > 0 ? <Navigate to={url} /> : <></>
 }
 
 export default RedirectComponent

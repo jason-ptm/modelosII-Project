@@ -41,9 +41,7 @@ const StudentForm: FC<IStudentFormProps> = ({
         borderColor: '#ddd',
       }}
     >
-      <Typography component="h1" variant="h5">
-        {`Integrante ${index + 1}`}
-      </Typography>
+      <Typography variant="h6">{`Integrante ${index + 1}`}</Typography>
       <Box component="form" noValidate sx={{ mt: 1 }}>
         <TextFieldSincronized
           margin="normal"

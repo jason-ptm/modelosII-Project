@@ -1,20 +1,18 @@
 import {
   Avatar,
   Box,
-  Button,
   CssBaseline,
   Grid,
   Paper,
-  TextField,
   Typography,
 } from '@mui/material'
 import { FC, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import BackgroundImage from '../../../assets/formBackground.jpg'
-import { getStudentById } from '../../../redux/slice/studentReducer'
-import './styles/index.css'
 import { TextFieldSincronized } from '../../../components'
 import { ButtonSincronized } from '../../../components/TextFieldSincronized/TextFieldSincronized'
+import { getStudentById } from '../../../redux/slice/studentReducer'
+import './styles/index.css'
 
 interface IFormProps {}
 

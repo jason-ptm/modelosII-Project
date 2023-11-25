@@ -32,11 +32,7 @@ const studentSlice = createSlice({
       return {
         ...state,
         loading: false,
-        selectedStudent: {
-          ...state.selectedStudent,
-          name: action.payload.name,
-          id: state.selectedStudent.id,
-        },
+        selectedStudent: action.payload,
       }
     },
     getStudentByIdError: (state): StudentInitialState => {
@@ -63,6 +59,13 @@ const studentSlice = createSlice({
         selectedTeam: action.payload,
       }
     },
+    registerTeamError: (state, action): StudentInitialState => {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      }
+    },
     resetLoading: (state): StudentInitialState => {
       return {
         ...state,
@@ -86,6 +89,7 @@ export const {
   getStudentByIdError,
   registerTeam,
   registerTeamSuccess,
+  registerTeamError,
   resetLoading,
   redirectRoute,
 } = studentSlice.actions

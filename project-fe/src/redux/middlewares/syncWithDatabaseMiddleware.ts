@@ -1,13 +1,13 @@
 import { Middleware } from '@reduxjs/toolkit'
 import StudentService from '../../services/StudentService'
+import paths from '../../utils/constants/paths'
 import {
   getStudentByIdError,
   getStudentByIdSuccess,
   redirectRoute,
+  registerTeamError,
   registerTeamSuccess,
-  resetLoading,
 } from '../slice/studentReducer'
-import paths from '../../utils/constants/paths'
 
 export const syncWithDatabaseMiddleware: Middleware =
   (store) => (next) => async (action) => {
@@ -21,7 +21,12 @@ export const syncWithDatabaseMiddleware: Middleware =
         const student = await studentService.getStudentById(payload)
 
         if (student) {
-          store.dispatch(getStudentByIdSuccess(student))
+          store.dispatch(
+            getStudentByIdSuccess({
+              id: payload,
+              name: student.name,
+            })
+          )
           store.dispatch(redirectRoute(`${paths.STUDENT_HOME.absolutePath}`))
         }
       } catch (e: any) {
@@ -40,11 +45,25 @@ export const syncWithDatabaseMiddleware: Middleware =
         const team = await await studentService.registerTeam(payload)
 
         if (team) {
+          console.log(
+            '🚀 ~ file: syncWithDatabaseMiddleware.ts:42 ~ payload:',
+            team
+          )
           store.dispatch(registerTeamSuccess(team))
-        } else store.dispatch(resetLoading())
-      } catch (e) {
-        store.dispatch(resetLoading())
-        console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:33 ~ e:', e)
+          store.dispatch(getStudentByIdSuccess(team[0]))
+          store.dispatch(redirectRoute(`${paths.STUDENT_HOME.absolutePath}`))
+        }
+      } catch (e: any) {
+        store.dispatch(
+          registerTeamError({
+            code: e.code,
+            text: e.message,
+          })
+        )
+        console.log(
+          '🚀 ~ file: syncWithDatabaseMiddleware.ts:33 ~ e:',
+          e.message
+        )
       }
     }
   }
