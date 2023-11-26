@@ -25,15 +25,15 @@ export default {
     absolutePath: `${studentPath}/register`,
   },
   STUDENT_HOME: {
-    slug: 'home',
-    absolutePath: `${studentPath}/home`,
+    slug: ':id/home',
+    absolutePath: `${studentPath}/:id/home`,
   },
   STUDENT_TEAM: {
-    slug: 'team',
-    absolutePath: `${studentPath}/team`,
+    slug: ':id/team',
+    absolutePath: `${studentPath}/:id/team`,
   },
   STUDENT_COMPETITIONS: {
-    slug: 'competitions',
-    absolutePath: `${studentPath}/competitions`,
+    slug: ':id/competitions',
+    absolutePath: `${studentPath}/:id/competitions`,
   },
 }

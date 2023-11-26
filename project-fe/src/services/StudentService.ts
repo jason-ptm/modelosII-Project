@@ -13,4 +13,14 @@ export default class StudentService extends ApiService {
     // return data
     return team
   }
+
+  getTeamById = async (id: string) => {
+    const { data } = await this.axios.get('')
+    return data
+  }
+
+  editTeamById = async (id: string) => {
+    const { data } = await this.axios.put('')
+    return data
+  }
 }

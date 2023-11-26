@@ -1,23 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { StudentInitialState } from '../../model/states'
+import { StudentState } from '../../model/states'
 import {
   errorInitialState,
   studentInitialState,
 } from '../../utils/constants/states'
+import { Student } from '../../model/student'
 
-const initialState: StudentInitialState = {
+const initialStudentsState: Student[] = [
+  { id: '', name: '', semester: 0, grade: '' },
+  { id: '', name: '', semester: 0, grade: '' },
+  { id: '', name: '', semester: 0, grade: '' },
+]
+
+const initialState: StudentState = {
   loading: false,
   error: errorInitialState,
-  selectedTeam: [],
+  selectedTeam: initialStudentsState,
   selectedStudent: studentInitialState,
-  urlToRedirect: '',
+  urlToRedirect: {
+    url: '',
+    state: {
+      isCreated: false,
+    },
+  },
 }
 
 const studentSlice = createSlice({
   name: 'student',
   initialState,
   reducers: {
-    getStudentById: (state, action): StudentInitialState => {
+    getStudentById: (state, action): StudentState => {
       const id = action.payload
       return {
         ...state,
@@ -28,14 +40,14 @@ const studentSlice = createSlice({
         },
       }
     },
-    getStudentByIdSuccess: (state, action): StudentInitialState => {
+    getStudentByIdSuccess: (state, action): StudentState => {
       return {
         ...state,
         loading: false,
         selectedStudent: action.payload,
       }
     },
-    getStudentByIdError: (state): StudentInitialState => {
+    getStudentByIdError: (state): StudentState => {
       return {
         ...state,
         loading: false,
@@ -45,34 +57,58 @@ const studentSlice = createSlice({
         },
       }
     },
-    registerTeam: (state, action): StudentInitialState => {
+    registerTeam: (state, action): StudentState => {
       return {
         ...state,
         loading: true,
         selectedTeam: action.payload,
       }
     },
-    registerTeamSuccess: (state, action): StudentInitialState => {
+    getTeamById: (state, _action): StudentState => {
+      return {
+        ...state,
+        loading: true,
+      }
+    },
+    getTeamByIdSuccess: (state, action): StudentState => {
       return {
         ...state,
         loading: false,
         selectedTeam: action.payload,
       }
     },
-    registerTeamError: (state, action): StudentInitialState => {
+    registerTeamSuccess: (state): StudentState => {
+      return {
+        ...state,
+        loading: false,
+      }
+    },
+    registerTeamError: (state, action): StudentState => {
       return {
         ...state,
         loading: false,
         error: action.payload,
       }
     },
-    resetLoading: (state): StudentInitialState => {
+    editTeamById: (state, _action): StudentState => {
       return {
         ...state,
-        loading: false,
+        loading: true,
       }
     },
-    redirectRoute: (state, action): StudentInitialState => {
+    resetStudent: (state): StudentState => {
+      return {
+        ...state,
+        selectedStudent: studentInitialState,
+        urlToRedirect: {
+          url: '',
+          state: {
+            isCreated: false,
+          },
+        },
+      }
+    },
+    redirectRoute: (state, action): StudentState => {
       return {
         ...state,
         urlToRedirect: action.payload,
@@ -87,9 +123,11 @@ export const {
   getStudentById,
   getStudentByIdSuccess,
   getStudentByIdError,
+  getTeamById,
+  getTeamByIdSuccess,
   registerTeam,
   registerTeamSuccess,
   registerTeamError,
-  resetLoading,
+  resetStudent,
   redirectRoute,
 } = studentSlice.actions

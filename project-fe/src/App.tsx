@@ -6,12 +6,12 @@ import {
 } from 'react-router-dom'
 import './App.css'
 import { CompetitionsList } from './components'
+import RedirectComponent from './components/RedirectComponent/RedirectComponent'
 import AdminAuthLayout from './containers/adminAuthLayout/AdminAuthLayout'
 import StudentAuthLayout from './containers/studentAuthLayout/StudenteAuthLayout'
 import { CompetitionDetails, TeamsList } from './pages/admin'
-import { ConsultForm, Home, TeamForm, TeamDetails } from './pages/student'
+import { ConsultForm, Home, TeamForm } from './pages/student'
 import paths, { adminPath, studentPath } from './utils/constants/paths'
-import RedirectComponent from './components/RedirectComponent/RedirectComponent'
 
 function App() {
   return (
@@ -54,7 +54,7 @@ function App() {
 
             <Route path={paths.STUDENT_HOME.slug} element={<Home />} />
 
-            <Route path={paths.STUDENT_TEAM.slug} element={<TeamDetails />} />
+            <Route path={paths.STUDENT_TEAM.slug} element={<TeamForm />} />
 
             <Route
               path={paths.STUDENT_COMPETITIONS.slug}

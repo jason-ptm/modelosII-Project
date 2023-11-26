@@ -1,9 +1,10 @@
 import { Middleware } from '@reduxjs/toolkit'
 import StudentService from '../../services/StudentService'
-import paths from '../../utils/constants/paths'
+import paths, { studentPath } from '../../utils/constants/paths'
 import {
   getStudentByIdError,
   getStudentByIdSuccess,
+  getTeamByIdSuccess,
   redirectRoute,
   registerTeamError,
   registerTeamSuccess,
@@ -13,7 +14,6 @@ export const syncWithDatabaseMiddleware: Middleware =
   (store) => (next) => async (action) => {
     const { type, payload } = action
     const studentService = new StudentService()
-    // const navigate = useNavigate()
     next(action)
 
     if (type === 'student/getStudentById') {
@@ -27,31 +27,64 @@ export const syncWithDatabaseMiddleware: Middleware =
               name: student.name,
             })
           )
-          store.dispatch(redirectRoute(`${paths.STUDENT_HOME.absolutePath}`))
+          store.dispatch(
+            redirectRoute({
+              url: `${studentPath}/${payload}/home`,
+              state: {
+                isCreated: false,
+              },
+            })
+          )
         }
       } catch (e: any) {
         store.dispatch(getStudentByIdError())
         store.dispatch(
-          redirectRoute(`${paths.STUDENT_REGISTER_FORM.absolutePath}`)
-        )
-        console.log(
-          '🚀 ~ file: syncWithDatabaseMiddleware.ts:27 ~ e:',
-          e.message
+          redirectRoute({
+            url: paths.STUDENT_REGISTER_FORM.absolutePath,
+            state: {
+              isCreated: true,
+            },
+          })
         )
       }
-    }
-    if (type === 'student/registerTeam') {
+    } else if (type === 'student/getTeamById') {
       try {
-        const team = await await studentService.registerTeam(payload)
+        // const team = await studentService.getTeamById(payload)
+
+        store.dispatch(
+          getTeamByIdSuccess([
+            {
+              id: payload,
+              name: 'test',
+            },
+            {
+              id: payload,
+              name: 'test',
+            },
+            {
+              id: payload,
+              name: 'test',
+            },
+          ])
+        )
+      } catch (e: any) {
+        console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:68 ~ e:', e)
+      }
+    } else if (type === 'student/registerTeam') {
+      try {
+        const team = await studentService.registerTeam(payload)
 
         if (team) {
-          console.log(
-            '🚀 ~ file: syncWithDatabaseMiddleware.ts:42 ~ payload:',
-            team
-          )
-          store.dispatch(registerTeamSuccess(team))
+          store.dispatch(registerTeamSuccess())
           store.dispatch(getStudentByIdSuccess(team[0]))
-          store.dispatch(redirectRoute(`${paths.STUDENT_HOME.absolutePath}`))
+          store.dispatch(
+            redirectRoute({
+              url: `${studentPath}/${team[0].id}/home`,
+              state: {
+                isCreated: false,
+              },
+            })
+          )
         }
       } catch (e: any) {
         store.dispatch(
@@ -64,6 +97,29 @@ export const syncWithDatabaseMiddleware: Middleware =
           '🚀 ~ file: syncWithDatabaseMiddleware.ts:33 ~ e:',
           e.message
         )
+      }
+    } else if (type === 'student/editTeamById') {
+      try {
+        // const newTeam = await studentService.editTeamById(payload)
+
+        store.dispatch(
+          getTeamByIdSuccess([
+            {
+              id: payload,
+              name: 'test',
+            },
+            {
+              id: payload,
+              name: 'test',
+            },
+            {
+              id: payload,
+              name: 'test',
+            },
+          ])
+        )
+      } catch (e: any) {
+        console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:105 ~ e:', e)
       }
     }
   }

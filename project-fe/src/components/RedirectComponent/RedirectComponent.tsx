@@ -9,13 +9,21 @@ const RedirectComponent: FC<any> = () => {
   const location = useLocation()
   const dispatch = useDispatch()
 
-  const [url, setUrl] = useState(urlToRedirect)
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
-    if (urlToRedirect !== location.pathname && urlToRedirect.trim().length > 0)
-      setUrl(urlToRedirect)
-    else dispatch(redirectRoute(''))
-  }, [urlToRedirect])
+    if (
+      urlToRedirect.url !== location.pathname
+    )
+      setUrl(urlToRedirect.url)
+    else
+      dispatch(
+        redirectRoute({
+          url: '',
+          isCreated: false,
+        })
+      )
+  }, [urlToRedirect.url])
 
   return url.trim().length > 0 ? <Navigate to={url} /> : <></>
 }
