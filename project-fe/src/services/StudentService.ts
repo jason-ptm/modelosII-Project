@@ -23,4 +23,14 @@ export default class StudentService extends ApiService {
     const { data } = await this.axios.put('')
     return data
   }
+
+  getCompetitions = async () => {
+    const { data } = await this.axios.get('')
+    return data
+  }
+
+  joinCompetition = async () => {
+    const { data } = await this.axios.put('')
+    return data
+  }
 }

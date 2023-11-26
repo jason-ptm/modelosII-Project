@@ -1,3 +1,4 @@
+import { Competitions } from './Competition'
 import { Student } from './student'
 
 export interface ErrorInitialState {
@@ -19,5 +20,6 @@ export interface StudentState {
   error: ErrorInitialState
   selectedTeam: Student[]
   selectedStudent: Student
+  competititons: Competitions[]
   urlToRedirect: RouteRedirectInterface
 }

@@ -6,7 +6,7 @@ import {
 } from '../../utils/constants/states'
 import { Student } from '../../model/student'
 
-const initialStudentsState: Student[] = [
+const initialTeamState: Student[] = [
   { id: '', name: '', semester: 0, grade: '' },
   { id: '', name: '', semester: 0, grade: '' },
   { id: '', name: '', semester: 0, grade: '' },
@@ -15,8 +15,9 @@ const initialStudentsState: Student[] = [
 const initialState: StudentState = {
   loading: false,
   error: errorInitialState,
-  selectedTeam: initialStudentsState,
+  selectedTeam: initialTeamState,
   selectedStudent: studentInitialState,
+  competititons: [],
   urlToRedirect: {
     url: '',
     state: {
@@ -34,10 +35,7 @@ const studentSlice = createSlice({
       return {
         ...state,
         loading: true,
-        selectedStudent: {
-          ...state.selectedStudent,
-          id,
-        },
+        selectedStudent: studentInitialState,
       }
     },
     getStudentByIdSuccess: (state, action): StudentState => {
@@ -96,10 +94,34 @@ const studentSlice = createSlice({
         loading: true,
       }
     },
+    getCompetitions: (state): StudentState => {
+      return {
+        ...state,
+        loading: true,
+      }
+    },
+    getCompetitionsSuccess: (state, action): StudentState => {
+      return {
+        ...state,
+        competititons: action.payload,
+      }
+    },
+    joinCompetition: (state, _action): StudentState => {
+      return {
+        ...state,
+      }
+    },
+    joinCompetitionSuccess: (state, action): StudentState => {
+      return {
+        ...state,
+        competititons: action.payload,
+      }
+    },
     resetStudent: (state): StudentState => {
       return {
         ...state,
         selectedStudent: studentInitialState,
+        selectedTeam: initialTeamState,
         urlToRedirect: {
           url: '',
           state: {
@@ -128,6 +150,10 @@ export const {
   registerTeam,
   registerTeamSuccess,
   registerTeamError,
+  getCompetitions,
+  getCompetitionsSuccess,
+  joinCompetition,
+  joinCompetitionSuccess,
   resetStudent,
   redirectRoute,
 } = studentSlice.actions
