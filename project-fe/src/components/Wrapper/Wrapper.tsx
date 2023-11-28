@@ -10,10 +10,12 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
 import { FC, useState } from 'react'
-import SideBar from '../../../components/SideBar'
+import SideBar from '../SideBar'
+import { roleTypes } from '../../utils/constants/states'
 
 interface IWrapperProps {
   children: any
+  role: roleTypes
 }
 
 const drawerWidth: number = 240
@@ -40,7 +42,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }))
 
-const Wrapper: FC<IWrapperProps> = ({ children }) => {
+const Wrapper: FC<IWrapperProps> = ({ children, role }) => {
   const [open, setOpen] = useState(true)
   const toggleDrawer = () => {
     setOpen(!open)
@@ -74,11 +76,11 @@ const Wrapper: FC<IWrapperProps> = ({ children }) => {
             noWrap
             sx={{ flexGrow: 1 }}
           >
-            Maraton de programacion
+            {role === 'student' ? 'Maraton de programacion' : 'Admin'}
           </Typography>
         </Toolbar>
       </AppBar>
-      <SideBar open={open} toggleDrawer={toggleDrawer} />
+      <SideBar open={open} toggleDrawer={toggleDrawer} role={role} />
       <Box
         component="main"
         sx={{

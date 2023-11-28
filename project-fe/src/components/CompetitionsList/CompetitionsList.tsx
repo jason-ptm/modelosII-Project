@@ -15,14 +15,20 @@ import BackgroundImage2 from '../../assets/competition2.jpg'
 import BackgroundImage3 from '../../assets/competition3.jpg'
 import BackgroundImage4 from '../../assets/competition4.jpg'
 import BackgroundImage5 from '../../assets/competition5.jpg'
-import { getCompetitions, joinCompetition } from '../../redux/slice/studentReducer'
+import {
+  getCompetitions,
+  joinCompetition,
+  redirectRoute,
+} from '../../redux/slice/studentReducer'
 import { RootState } from '../../redux/store'
 import './style/index.css'
+import { useParams } from 'react-router-dom'
 
 interface ICompetitionsListProps {}
 
 const CompetitionsList: FC<ICompetitionsListProps> = () => {
   const dispatch = useDispatch()
+  const params = useParams()
   const { competititons } = useSelector((state: RootState) => state.student)
 
   useEffect(() => {
@@ -42,7 +48,16 @@ const CompetitionsList: FC<ICompetitionsListProps> = () => {
   }
 
   const handleClick = (id: string) => {
-    dispatch(joinCompetition(id))
+    if (params.adminId) {
+      dispatch(
+        redirectRoute({
+          url: `admin/${params.adminId}/competitions/${id}`,
+          state: {
+            isCreated: true,
+          },
+        })
+      )
+    } else dispatch(joinCompetition(id))
   }
 
   return (
@@ -76,7 +91,9 @@ const CompetitionsList: FC<ICompetitionsListProps> = () => {
                   disabled={!competition.state}
                   onClick={() => handleClick(competition.id)}
                 >
-                  Inscribirse
+                  {
+                    !params.adminId ? 'Inscribirse' : 'Editar'
+                  }
                 </Button>
               </CardActions>
             </Card>

@@ -12,3 +12,5 @@ export const studentInitialState: Student = {
   semester: 0,
   grade: '',
 }
+
+export type roleTypes = 'admin' | 'student'

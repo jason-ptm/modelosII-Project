@@ -12,13 +12,14 @@ import Toolbar from '@mui/material/Toolbar'
 import { styled } from '@mui/material/styles'
 import { FC } from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { redirectRoute, resetStudent } from '../../redux/slice/studentReducer'
-import { studentPath } from '../../utils/constants/paths'
+import paths, { studentPath } from '../../utils/constants/paths'
 
 interface ISideBarProps {
   open: boolean
   toggleDrawer: () => void
+  role: 'admin' | 'student'
 }
 
 const drawerWidth: number = 240
@@ -49,7 +50,7 @@ const Drawer = styled(MuiDrawer, {
   },
 }))
 
-const SideBar: FC<ISideBarProps> = ({ open, toggleDrawer }) => {
+const SideBar: FC<ISideBarProps> = ({ open, toggleDrawer, role }) => {
   const dispatch = useDispatch()
   const params = useParams()
   const handleClick = (url: string, isCreated: boolean) => {
@@ -64,10 +65,21 @@ const SideBar: FC<ISideBarProps> = ({ open, toggleDrawer }) => {
   }
 
   const handleLogOut = () => {
-    dispatch(resetStudent())
+    if (role === 'student') {
+      dispatch(resetStudent())
+    } else {
+      dispatch(
+        redirectRoute({
+          url: paths.STUDENT_FORM.absolutePath,
+          state: {
+            isCreated: false,
+          },
+        })
+      )
+    }
   }
 
-  const mainListItems = (
+  const mainStudentListItems = (
     <>
       <ListItemButton
         onClick={() => handleClick(`${studentPath}/${params.id}/home`, false)}
@@ -98,6 +110,29 @@ const SideBar: FC<ISideBarProps> = ({ open, toggleDrawer }) => {
     </>
   )
 
+  const mainAdminListItems = (
+    <>
+      <ListItemButton
+        onClick={() => handleClick(`admin/${params.adminId}/teams`, false)}
+      >
+        <ListItemIcon>
+          <Groups2Icon />
+        </ListItemIcon>
+        <ListItemText primary="Equipos" />
+      </ListItemButton>
+      <ListItemButton
+        onClick={() =>
+          handleClick(`admin/${params.adminId}/competitions`, false)
+        }
+      >
+        <ListItemIcon>
+          <EmojiEventsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Competiciones" />
+      </ListItemButton>
+    </>
+  )
+
   return (
     <Drawer variant="permanent" open={open}>
       <Toolbar
@@ -113,7 +148,9 @@ const SideBar: FC<ISideBarProps> = ({ open, toggleDrawer }) => {
         </IconButton>
       </Toolbar>
       <Divider />
-      <List component="nav">{mainListItems}</List>
+      <List component="nav">
+        {role === 'student' ? mainStudentListItems : mainAdminListItems}
+      </List>
       <Divider />
       <List>
         <ListItemButton onClick={handleLogOut}>

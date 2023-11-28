@@ -3,6 +3,10 @@ export const studentPath = '/student'
 
 export default {
   // ADMINS ROUTES
+  ADMIN_HOME: {
+    slug: 'home',
+    absolutePath: `${adminPath}/home`,
+  },
   ADMIN_COMPETITIONS: {
     slug: 'competitions',
     absolutePath: `${adminPath}/competitions`,
