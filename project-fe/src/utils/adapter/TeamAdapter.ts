@@ -14,7 +14,7 @@ export const getTeamAdapter = (team: any): Team => {
   return {
     id: team.teamID,
     name: team.teamName,
-    competitionInscribed: team.enrrolled,
+    competitionInscribed: team.enrolled,
     members,
   }
 }

@@ -23,7 +23,7 @@ const TeamsList: FC<ITeamsListProps> = (props) => {
         Equipos
       </Typography>
       {teams.length > 1 ? (
-        teams.map((team) => (
+        teams.map((team: any) => (
           <>
             <TeamItemList team={team} key={team.id} showEditButton={false} />
           </>

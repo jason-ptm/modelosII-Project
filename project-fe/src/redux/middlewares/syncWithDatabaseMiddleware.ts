@@ -76,10 +76,6 @@ export const syncWithDatabaseMiddleware: Middleware =
             text: e.message,
           })
         )
-        console.log(
-          '🚀 ~ file: syncWithDatabaseMiddleware.ts:33 ~ e:',
-          e.message
-        )
       }
     } else if (type === 'student/editTeam') {
       try {
@@ -110,11 +106,10 @@ export const syncWithDatabaseMiddleware: Middleware =
       }
     } else if (type === 'student/joinCompetition') {
       try {
-        const competitionService = new CompetitionServiceProxy(
-          store.getState().student.selectedStudent
+        await competitionService.joinCompetition(
+          payload.teamName,
+          payload.competitionName
         )
-
-        competitionService.joinCompetition()
       } catch (e: any) {
         console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:160 ~ e:', e)
       }

@@ -16,9 +16,14 @@ const TextFieldSincronized: FC<any> = (props) => {
 }
 
 export const ButtonSincronized: FC<any> = (props) => {
-  const { loading } = useSelector((state: RootState) => state.student)
+  const { loading, selectedStudent } = useSelector(
+    (state: RootState) => state.student
+  )
   return (
-    <Button {...props} disabled={loading}>
+    <Button
+      {...props}
+      disabled={selectedStudent.team?.competitionInscribed || loading}
+    >
       {props.children}
     </Button>
   )

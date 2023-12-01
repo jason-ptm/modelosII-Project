@@ -16,7 +16,7 @@ export const initialTeamState: Team = {
     { id: '', name: '', level: 0, subject: '' },
     { id: '', name: '', level: 0, subject: '' },
   ],
-  competitionInscribed: '',
+  competitionInscribed: false,
 }
 
 export const studentInitialState: Student = {

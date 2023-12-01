@@ -4,7 +4,7 @@ export interface Team {
   id: string
   name: string
   members: Student[]
-  competitionInscribed: string
+  competitionInscribed: boolean
 }
 
 export interface SetTeamInterface {

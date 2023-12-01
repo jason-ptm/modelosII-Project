@@ -51,10 +51,6 @@ const Wrapper: FC<IWrapperProps> = ({ children, role }) => {
     setOpen(!open)
   }
 
-  useEffect(() => {
-    console.log('🚀 ~ file: Wrapper.tsx:57 ~ loading:', loading)
-  }, [loading])
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />

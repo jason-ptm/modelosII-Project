@@ -14,9 +14,5 @@ export const getCompetitionsAdapter = (competitions: any): Competition[] => {
     (competition: any) => getCompetitionAdapter(competition)
   )
 
-  console.log(
-    '🚀 ~ file: CompetitionAdapter.ts:18 ~ getCompetitionsAdapter ~ finalCompetitions:',
-    finalCompetitions
-  )
   return finalCompetitions
 }

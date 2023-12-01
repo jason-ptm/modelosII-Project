@@ -13,7 +13,7 @@ const Home: FC<IHomeProps> = () => {
   const dispatch = useDispatch()
   const params = useParams()
   const { selectedStudent } = useSelector((state: RootState) => state.student)
-
+  
   const handleRegister = () => {
     dispatch(
       redirectRoute({

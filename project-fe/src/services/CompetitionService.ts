@@ -23,8 +23,10 @@ export default class CompetitionService extends ApiService {
     return data
   }
 
-  joinCompetition = async () => {
-    const { data } = await this.axios.put(`${apiBaseUrl}/team`)
+  joinCompetition = async (teamName: string, competitionName: string) => {
+    const { data } = await this.axios.put(
+      `${apiBaseUrl}/competition?teamname=${teamName}&compname=${competitionName}`
+    )
     return data
   }
 }

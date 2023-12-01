@@ -9,6 +9,8 @@ import { studentPath } from '../../utils/constants/paths'
 import './styles/index.css'
 import DeleteIcon from '@mui/icons-material/Delete'
 import React from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux/store'
 
 interface ITeamItemListProps {
   team: Team
@@ -18,6 +20,8 @@ interface ITeamItemListProps {
 const TeamItemList: FC<ITeamItemListProps> = ({ team, showEditButton }) => {
   const dispatch = useDispatch()
   const params = useParams()
+
+  const { selectedStudent } = useSelector((state: RootState) => state.student)
 
   const handleEditClick = () => {
     dispatch(
@@ -101,7 +105,11 @@ const TeamItemList: FC<ITeamItemListProps> = ({ team, showEditButton }) => {
         )}
       </Box>
       {showEditButton ? (
-        <Button variant="contained" onClick={handleEditClick}>
+        <Button
+          variant="contained"
+          onClick={handleEditClick}
+          disabled={selectedStudent.team?.competitionInscribed}
+        >
           Editar
         </Button>
       ) : (

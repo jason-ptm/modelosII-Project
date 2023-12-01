@@ -12,17 +12,20 @@ class CompetitionServiceProxy {
     this.student = user
   }
 
-  async joinCompetition() {
+  async joinCompetition(teamName: string, competitionName: string) {
     if (this.hasPermission(this.student)) {
-      return await this.competitionService.joinCompetition()
+      return await this.competitionService.joinCompetition(
+        teamName,
+        competitionName
+      )
     } else {
       throw new Error('No tienes permisos para unirte a la competición.')
     }
   }
 
   hasPermission(student: Student) {
-    if(student.team){
-      return student.team.competitionInscribed  
+    if (student.team) {
+      return student.team.competitionInscribed
     }
     return false
   }

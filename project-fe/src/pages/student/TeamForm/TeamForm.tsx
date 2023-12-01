@@ -22,7 +22,7 @@ interface IRegisterFormProps {}
 const TeamForm: FC<IRegisterFormProps> = () => {
   const dispatch = useDispatch()
   const params = useParams()
-  const { error, selectedStudent, selectedTeam, loading } = useSelector(
+  const { error, selectedStudent, loading } = useSelector(
     (state: RootState) => state.student
   )
   const [name, setName] = useState(
@@ -171,6 +171,7 @@ const TeamForm: FC<IRegisterFormProps> = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2, width: '200px' }}
             onClick={handleSubmit}
+            disabled={selectedStudent.team?.competitionInscribed}
           >
             {isCreate ? 'Registrar equipo' : 'Guardar equipo'}
           </ButtonSincronized>

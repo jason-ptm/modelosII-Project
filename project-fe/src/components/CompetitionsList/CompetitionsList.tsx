@@ -44,14 +44,14 @@ const CompetitionsList: FC<ICompetitionsListProps> = () => {
 
   useEffect(() => {
     if (params.id && selectedStudent.team) {
-      let lowestLevel = selectedStudent.team.members[0].level
+      let higherLevel = selectedStudent.team.members[0].level
 
       for (const student of selectedStudent.team.members) {
-        if (student.level < lowestLevel) {
-          lowestLevel = student.level
+        if (student.level > higherLevel) {
+          higherLevel = student.level
         }
       }
-      dispatch(getCompetitionsByCategory(lowestLevel))
+      dispatch(getCompetitionsByCategory(higherLevel))
     } else if (params.adminId) {
       dispatch(getCompetitions())
     }
@@ -88,17 +88,23 @@ const CompetitionsList: FC<ICompetitionsListProps> = () => {
     )
   }
 
-  const handleClick = (id: string) => {
+  const handleClick = (competition: Competition) => {
     if (params.adminId) {
       dispatch(
         redirectRoute({
-          url: `admin/${params.adminId}/competitions/${id}`,
+          url: `admin/${params.adminId}/competitions/${competition.id}`,
           state: {
             isCreated: true,
           },
         })
       )
-    } else dispatch(joinCompetition(id))
+    } else
+      dispatch(
+        joinCompetition({
+          teamName: selectedStudent.team?.name,
+          competitionName: competition.name,
+        })
+      )
   }
 
   return (
@@ -144,7 +150,8 @@ const CompetitionsList: FC<ICompetitionsListProps> = () => {
                   <Button
                     size="small"
                     variant="contained"
-                    onClick={() => handleClick(competition.id)}
+                    onClick={() => handleClick(competition)}
+                    disabled={selectedStudent.team?.competitionInscribed}
                   >
                     Inscribirse
                   </Button>
