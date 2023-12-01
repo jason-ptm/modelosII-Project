@@ -1,93 +1,74 @@
 import { Middleware } from '@reduxjs/toolkit'
 import StudentService from '../../services/StudentService'
-import paths, { studentPath } from '../../utils/constants/paths'
+import TeamService from '../../services/TeamService'
+import { getStudentAdapter } from '../../utils/adapter'
+import paths, { adminPath, studentPath } from '../../utils/constants/paths'
 import {
-  getCompetitionsSuccess,
-  getStudentByIdError,
+  getCompetitionsByCategorySuccess,
   getStudentByIdSuccess,
-  getTeamByIdSuccess,
   joinCompetitionSuccess,
   redirectRoute,
+  registerTeam,
   registerTeamError,
   registerTeamSuccess,
 } from '../slice/studentReducer'
+import { getTeamAdapter } from '../../utils/adapter/TeamAdapter'
+import CompetitionServiceProxy from '../../utils/proxy/CompetitionServiceProxy'
+import CompetitionService from '../../services/CompetitionService'
+import { getCompetitionsAdapter } from '../../utils/adapter/CompetitionAdapter'
+import {
+  createCompetitionSuccess,
+  getCompetitions,
+  getCompetitionsSuccess,
+} from '../slice/adminReducer'
 
 export const syncWithDatabaseMiddleware: Middleware =
   (store) => (next) => async (action) => {
     const { type, payload } = action
     const studentService = new StudentService()
+    const teamService = new TeamService()
+    const competitionService = new CompetitionService()
+
     next(action)
 
     if (type === 'student/getStudentById') {
       try {
-        const student = await studentService.getStudentById(payload)
+        let student = await studentService.getStudentById(payload)
+        student = await getStudentAdapter(student)
 
-        if (student) {
-          store.dispatch(
-            getStudentByIdSuccess({
-              id: payload,
-              name: student.name,
-            })
-          )
-          store.dispatch(
-            redirectRoute({
-              url: `${studentPath}/${payload}/home`,
-              state: {
-                isCreated: false,
-              },
-            })
-          )
-        }
-      } catch (e: any) {
-        store.dispatch(getStudentByIdError())
+        store.dispatch(getStudentByIdSuccess(student))
         store.dispatch(
           redirectRoute({
-            url: paths.STUDENT_REGISTER_FORM.absolutePath,
+            url: `${studentPath}/${student.id}/home`,
+            state: {
+              isCreated: false,
+            },
+          })
+        )
+      } catch (e: any) {
+        store.dispatch(
+          redirectRoute({
+            url: paths.STUDENT_FORM.absolutePath,
             state: {
               isCreated: true,
             },
           })
         )
       }
-    } else if (type === 'student/getTeamById') {
-      try {
-        // const team = await studentService.getTeamById(payload)
-
-        store.dispatch(
-          getTeamByIdSuccess([
-            {
-              id: payload,
-              name: 'test',
-            },
-            {
-              id: payload,
-              name: 'test',
-            },
-            {
-              id: payload,
-              name: 'test',
-            },
-          ])
-        )
-      } catch (e: any) {
-        console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:68 ~ e:', e)
-      }
     } else if (type === 'student/registerTeam') {
       try {
-        const team = await studentService.registerTeam(payload)
+        const team = await teamService.registerTeam({
+          name: payload.name,
+          member: payload.members[0],
+        })
 
-        if (team) {
-          store.dispatch(registerTeamSuccess())
-          store.dispatch(getStudentByIdSuccess(team[0]))
-          store.dispatch(
-            redirectRoute({
-              url: `${studentPath}/${team[0].id}/home`,
-              state: {
-                isCreated: false,
-              },
-            })
-          )
-        }
+        const finalTeam = await teamService.addMembersToTeam(
+          team.teamID,
+          payload.members[1].id,
+          payload.members[2].id
+        )
+
+        store.dispatch(registerTeamSuccess(getTeamAdapter(finalTeam)))
       } catch (e: any) {
         store.dispatch(
           registerTeamError({
@@ -95,99 +76,66 @@ export const syncWithDatabaseMiddleware: Middleware =
             text: e.message,
           })
         )
-        console.log(
-          '🚀 ~ file: syncWithDatabaseMiddleware.ts:33 ~ e:',
-          e.message
-        )
       }
-    } else if (type === 'student/editTeamById') {
+    } else if (type === 'student/editTeam') {
       try {
-        // const newTeam = await studentService.editTeamById(payload)
+        const team = store.getState().student.selectedStudent.team
+
+        await teamService.deleteTeamById(team.id)
 
         store.dispatch(
-          getTeamByIdSuccess([
-            {
-              id: payload,
-              name: 'test',
-            },
-            {
-              id: payload,
-              name: 'test',
-            },
-            {
-              id: payload,
-              name: 'test',
-            },
-          ])
+          registerTeam({
+            name: team.name,
+            members: team.members,
+          })
         )
       } catch (e: any) {
         console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:105 ~ e:', e)
       }
-    } else if (type === 'student/getCompetitions') {
+    } else if (type === 'student/getCompetitionsByCategory') {
       try {
-        // const competitions = await studentService.getCompetitions()
+        const competitions = await competitionService.getCompetitionsByCategory(
+          payload
+        )
 
         store.dispatch(
-          getCompetitionsSuccess([
-            {
-              name: 'test1',
-              level: 'medium',
-              id: 1,
-              state: true,
-            },
-            {
-              name: 'test2',
-              level: 'medium',
-              id: 2,
-              state: false,
-            },
-            {
-              name: 'test3',
-              level: 'advanced',
-              id: 3,
-              state: false,
-            },
-            {
-              name: 'test4',
-              level: 'basic',
-              id: 4,
-              state: false,
-            },
-          ])
+          getCompetitionsByCategorySuccess(getCompetitionsAdapter(competitions))
         )
       } catch (e: any) {
         console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:154 ~ e:', e)
       }
     } else if (type === 'student/joinCompetition') {
       try {
-        // const team = await studentService.joinCompetition()
-        console.log(payload)
-        store.dispatch(
-          joinCompetitionSuccess([
-            {
-              name: 'test1',
-              level: 'medium',
-              id: 1,
-            },
-            {
-              name: 'test2',
-              level: 'medium',
-              id: 2,
-            },
-            {
-              name: 'test3',
-              level: 'advanced',
-              id: 3,
-            },
-            {
-              name: 'test4',
-              level: 'basic',
-              id: 4,
-            },
-          ])
+        await competitionService.joinCompetition(
+          payload.teamName,
+          payload.competitionName
         )
       } catch (e: any) {
         console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:160 ~ e:', e)
+      }
+    } else if (type === 'admin/getCompetitions') {
+      try {
+        const competitions = await competitionService.getCompetitions()
+
+        store.dispatch(
+          getCompetitionsSuccess(getCompetitionsAdapter(competitions))
+        )
+      } catch (e: any) {
+        console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:118 ~ e:', e)
+      }
+    } else if (type === 'admin/createCompetition') {
+      try {
+        competitionService.createCompetition(payload.name, payload.level)
+
+        store.dispatch(createCompetitionSuccess())
+        store.dispatch(getCompetitions())
+        store.dispatch(
+          redirectRoute({
+            url: `admin/12345/${paths.ADMIN_COMPETITIONS.slug}`,
+          })
+        )
+      } catch (e: any) {
+        console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:118 ~ e:', e)
       }
     }
   }

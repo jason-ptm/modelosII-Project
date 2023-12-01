@@ -1,5 +1,6 @@
 import { Navigate, Outlet, useParams } from 'react-router-dom'
 import paths from '../../utils/constants/paths'
+import { Wrapper } from '../../components'
 
 export default function AdminAuthLayout() {
   const params = useParams()
@@ -8,6 +9,8 @@ export default function AdminAuthLayout() {
   return !isAdmin ? (
     <Navigate to={paths.STUDENT_FORM.absolutePath} />
   ) : (
-    <Outlet />
+    <Wrapper role="admin">
+      <Outlet />
+    </Wrapper>
   )
 }

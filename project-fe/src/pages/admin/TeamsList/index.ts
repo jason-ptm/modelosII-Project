@@ -1,3 +1,2 @@
-
-import TeamsList from './TeamsList';
-export default TeamsList;    
+import TeamsList from './TeamsList'
+export default TeamsList

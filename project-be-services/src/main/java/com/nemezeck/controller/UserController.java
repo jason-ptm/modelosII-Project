@@ -1,45 +1,51 @@
 package com.nemezeck.controller;
+
 import java.util.LinkedHashMap;
+import java.util.Optional;
+
+import com.nemezeck.config.ResponseStatus;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nemezeck.model.ResponseStatus;
+
 import com.nemezeck.model.User;
 import com.nemezeck.repository.PersonRepository;
-
-
+import com.nemezeck.services.UserService;
 
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 	
-	private final PersonRepository userData;
+	private final UserService userService;
 	private ResponseStatus rs;
 	
-	public UserController(PersonRepository _userData)
+	@Autowired
+	public UserController(UserService userService)
 	{
-		userData= _userData;
+		this.userService= userService;
 	}
 	
 	
 
-	@GetMapping("/user")
+	@GetMapping
 	public ResponseEntity<?> getUserInfo(@RequestParam(name = "memberid") String memberID) {
 		try {
-
-			
+	
 			if (memberID.trim().isEmpty() || memberID == null) 
 				return new ResponseEntity<Object>(rs.ErrorContent(HttpStatus.BAD_REQUEST,"/user" ), HttpStatus.BAD_REQUEST );
 			
-			
-			User user= userData.getPersonInfo(memberID);
+			User user= userService.getUserInfoByID(memberID);
 			
 			if (user != null)
 				return new ResponseEntity<>(user, HttpStatus.OK);
-			
 			
 			return new ResponseEntity<>(rs.ErrorContent(HttpStatus.NOT_FOUND, "/user"), HttpStatus.NOT_FOUND );
 		}
@@ -50,8 +56,4 @@ public class UserController {
 		}
 	}
 	
-
-	}
-
-
-	
+}

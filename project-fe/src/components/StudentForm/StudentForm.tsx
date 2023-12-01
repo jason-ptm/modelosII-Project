@@ -14,6 +14,7 @@ import './style/index.css'
 interface IStudentFormProps {
   index: number
   student: Student
+  disabled?: boolean
   handleChange: (index: number, event: any) => void
 }
 
@@ -21,23 +22,25 @@ const StudentForm: FC<IStudentFormProps> = ({
   index,
   student,
   handleChange,
+  disabled,
 }) => {
   const [currentStudent, setCurrentStudent] = useState<Student>(student)
 
   useEffect(() => {
     setCurrentStudent(student)
   }, [student])
+
   return (
     <Box
       sx={{
         flexBasis: '200px',
         flexGrow: 1,
-        padding: '20px',
+        padding: '30px 20px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
-        borderRight: 1,
-        borderLeft: 1,
+        borderRight: index === 1 ? 2 : 0,
+        borderLeft: index === 1 ? 2 : 0,
         borderColor: '#ddd',
       }}
     >
@@ -52,6 +55,7 @@ const StudentForm: FC<IStudentFormProps> = ({
           name="id"
           value={currentStudent.id}
           onChange={(e: any) => handleChange(index, e)}
+          disabled={disabled}
         />
         <TextFieldSincronized
           margin="normal"
@@ -62,13 +66,14 @@ const StudentForm: FC<IStudentFormProps> = ({
           name="name"
           value={currentStudent.name}
           onChange={(e: any) => handleChange(index, e)}
+          disabled={disabled}
         />
         <FormControl fullWidth margin="normal">
           <InputLabel id="demo-simple-select-label">Materia</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={currentStudent.grade}
+            value={currentStudent.subject}
             name="grade"
             label="Materia"
             onChange={(e: any) => handleChange(index, e)}
@@ -85,7 +90,7 @@ const StudentForm: FC<IStudentFormProps> = ({
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={currentStudent.semester}
+            value={currentStudent.level}
             label="Semestre"
             name="semester"
             onChange={(e: any) => handleChange(index, e)}

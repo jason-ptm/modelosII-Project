@@ -7,35 +7,57 @@ import {
 } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import BackgroundImage from '../../../assets/registerBackground.jpg'
+import { useParams } from 'react-router-dom'
 import StudentForm from '../../../components/StudentForm'
-import { ButtonSincronized } from '../../../components/TextFieldSincronized/TextFieldSincronized'
+import TextFieldSincronized, {
+  ButtonSincronized,
+} from '../../../components/TextFieldSincronized/TextFieldSincronized'
 import { Student } from '../../../model/student'
-import { getTeamById, registerTeam } from '../../../redux/slice/studentReducer'
+import { editTeam, registerTeam } from '../../../redux/slice/studentReducer'
 import { RootState } from '../../../redux/store'
 import './styles/index.css'
-import { useLocation, useParams } from 'react-router-dom'
 
 interface IRegisterFormProps {}
 
 const TeamForm: FC<IRegisterFormProps> = () => {
   const dispatch = useDispatch()
   const params = useParams()
-  const location = useLocation()
-  const { error, urlToRedirect, selectedStudent, selectedTeam } = useSelector(
+  const { error, selectedStudent, loading } = useSelector(
     (state: RootState) => state.student
   )
-  const [students, setStudents] = useState<Student[]>(selectedTeam)
+  const [name, setName] = useState(
+    selectedStudent.team?.name?.replace(/['"]+/g, '') || ' '
+  )
+  const [students, setStudents] = useState<Student[]>(
+    selectedStudent.team?.members || []
+  )
+  const [isCreate, setIsCreate] = useState(!!params?.id)
+  const [disableForm, setDisableForm] = useState(false)
 
   useEffect(() => {
-    if (urlToRedirect.state.isCreated) {
-      dispatch(getTeamById(selectedStudent.id))
-      setStudents(selectedTeam)
+    setStudents(selectedStudent.team?.members || [])
+    setName(selectedStudent.team?.name || '')
+  }, [isCreate])
+
+  useEffect(() => {
+    if (
+      selectedStudent.team &&
+      selectedStudent.team.members.filter((member) => member.id).length > 1
+    )
+      setIsCreate(false)
+    else setIsCreate(true)
+  }, [selectedStudent.team])
+
+  useEffect(() => {
+    if (selectedStudent.team && selectedStudent.team.competitionInscribed) {
+      setDisableForm(true)
+    } else {
+      setDisableForm(loading)
     }
-  }, [])
+  }, [loading, isCreate, selectedStudent.team])
 
   const handleInputChange = (index: number, event: any) => {
-    const newStudents = [...students]
+    const newStudents = students ? [...students] : []
     newStudents[index] = {
       ...newStudents[index],
       [event.target.name]: event.target.value,
@@ -45,23 +67,33 @@ const TeamForm: FC<IRegisterFormProps> = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (urlToRedirect.state.isCreated) {
-      
+    if (isCreate) {
+      dispatch(
+        registerTeam({
+          name: name,
+          members: students,
+        })
+      )
+    } else {
+      dispatch(
+        editTeam({
+          name,
+          members: students,
+        })
+      )
     }
-    else{
-      dispatch(registerTeam(students))
-    }
-    
+  }
+
+  const getDisableFirstInput = (index: number): boolean => {
+    return !disableForm && !isCreate && index === 0
   }
 
   return (
     <Grid
       container
       sx={{
+        width: '100%',
         height: '100%',
-        backgroundImage: urlToRedirect.state.isCreated
-          ? `url(${BackgroundImage})`
-          : '',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -71,6 +103,7 @@ const TeamForm: FC<IRegisterFormProps> = () => {
     >
       <Box
         sx={{
+          width: '100%',
           backgroundColor: '#ffffff2e',
           display: 'flex',
           justifyContent: 'center',
@@ -80,8 +113,7 @@ const TeamForm: FC<IRegisterFormProps> = () => {
       >
         <FormControl
           sx={{
-            padding: urlToRedirect.state.isCreated ? '20px 40px' : '0',
-            width: urlToRedirect.state.isCreated ? '60%' : '100%',
+            width: '100%',
             backgroundColor: '#fff',
             borderRadius: 2,
             display: 'flex',
@@ -91,29 +123,46 @@ const TeamForm: FC<IRegisterFormProps> = () => {
           }}
         >
           <Typography variant="h4" align="center">
-            {urlToRedirect.state.isCreated
-              ? 'Registrar equipo'
-              : 'Editar equipo'}
+            {isCreate ? 'Registrar equipo' : 'Editar equipo'}
           </Typography>
           <Grid
             container
-            direction="row"
+            direction="column"
             display="flex"
             spacing={2}
             sx={{
-              gap: '10px',
               margin: '20px 0 0 0',
               width: '100%',
+              flexGrow: 1,
             }}
           >
-            {students.map((student, index) => (
-              <StudentForm
-                index={index}
-                key={index}
-                student={student}
-                handleChange={handleInputChange}
-              />
-            ))}
+            <TextFieldSincronized
+              margin="normal"
+              required
+              id="id"
+              label="Nombre equipo"
+              name="id"
+              value={name}
+              sx={{ width: '100%', maxWidth: '400px', margin: '20px' }}
+              onChange={(e: any) => setName(e.target.value)}
+            />
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+              }}
+            >
+              {students?.map((student, index) => (
+                <StudentForm
+                  index={index}
+                  key={index}
+                  student={student}
+                  handleChange={handleInputChange}
+                  disabled={getDisableFirstInput(index)}
+                />
+              ))}
+            </Box>
           </Grid>
           {error && <FormHelperText>{error.text}</FormHelperText>}
           <ButtonSincronized
@@ -122,10 +171,9 @@ const TeamForm: FC<IRegisterFormProps> = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2, width: '200px' }}
             onClick={handleSubmit}
+            disabled={selectedStudent.team?.competitionInscribed}
           >
-            {urlToRedirect.state.isCreated
-              ? 'Registrar equipo'
-              : 'Guardar equipo'}
+            {isCreate ? 'Registrar equipo' : 'Guardar equipo'}
           </ButtonSincronized>
         </FormControl>
       </Box>
