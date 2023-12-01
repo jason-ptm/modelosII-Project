@@ -58,7 +58,7 @@ const SideBar: FC<ISideBarProps> = ({ open, toggleDrawer, role }) => {
       redirectRoute({
         url,
         state: {
-          isCreated,
+          isCreated: isCreated,
         },
       })
     )

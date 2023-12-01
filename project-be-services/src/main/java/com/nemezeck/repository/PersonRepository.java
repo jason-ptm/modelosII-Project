@@ -14,5 +14,7 @@ public interface PersonRepository extends JpaRepository<User, String>{
 	@Query(value="SELECT fk_team_id FROM User fk_team_id WHERE idNumber=:val")
 	User getUserTeamAssignedID(@Param("val")String studentID ) ;
 	
-	
+	@Modifying
+	@Query("UPDATE User SET hasTeam= false WHERE idNumber=:val")
+	void leaveTeam(@Param("val")String studentID ) ;
 }

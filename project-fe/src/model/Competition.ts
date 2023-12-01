@@ -1,8 +1,9 @@
-import { gradeTypes } from "./student"
+import { Team } from './Team'
+import { subjectTypes } from './student'
 
-export interface Competitions {
+export interface Competition {
   name: string
-  level: gradeTypes
+  level: subjectTypes
   id: string
-  state: boolean
+  teams: Team[]
 }

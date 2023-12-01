@@ -1,5 +1,6 @@
 export const adminPath = '/admin/:adminId'
 export const studentPath = '/student'
+export const authenticatedStudentPath = '/student/:id'
 
 export default {
   // ADMINS ROUTES
@@ -15,6 +16,10 @@ export default {
     slug: 'competitions/:id',
     absolutePath: `${adminPath}/competitions/:id`,
   },
+  ADMIN_CREATE_COMPETITION: {
+    slug: 'create-competition',
+    absolutePath: `${adminPath}/create-competition`,
+  },
   ADMIN_TEAMS: {
     slug: 'teams',
     absolutePath: `${adminPath}/teams`,
@@ -24,20 +29,16 @@ export default {
     slug: 'form',
     absolutePath: `${studentPath}/form`,
   },
-  STUDENT_REGISTER_FORM: {
-    slug: 'register',
-    absolutePath: `${studentPath}/register`,
-  },
   STUDENT_HOME: {
-    slug: ':id/home',
-    absolutePath: `${studentPath}/:id/home`,
+    slug: 'home',
+    absolutePath: `${authenticatedStudentPath}/home`,
   },
   STUDENT_TEAM: {
-    slug: ':id/team',
-    absolutePath: `${studentPath}/:id/team`,
+    slug: 'team',
+    absolutePath: `${authenticatedStudentPath}/team`,
   },
   STUDENT_COMPETITIONS: {
-    slug: ':id/competitions',
-    absolutePath: `${studentPath}/:id/competitions`,
+    slug: 'competitions',
+    absolutePath: `${authenticatedStudentPath}/competitions`,
   },
 }

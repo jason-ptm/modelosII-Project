@@ -2,6 +2,7 @@ package com.nemezeck.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,11 +61,7 @@ public class TeamService {
 	}
     
     public boolean isTeamIDValid(String teamID) {
-	    int teamIndex = Integer.parseInt(teamID) - 1;
-		  
-	    if (teamIndex < 0 || teamIndex >= teamRepository.findAll().size()) 
-	        return false;
-	    return true;
+	    return teamRepository.existsById(Integer.parseInt(teamID));
     }
     
     public boolean isTeamNameAvailable(String teamName) {
@@ -82,9 +79,7 @@ public class TeamService {
 	
     public boolean isStudentInOtherTeam(String studentID) {
         User u = memberInfo.findById(studentID).orElse(null);
-        if(u.isHasTeam())
-        	return true;
-        return false;
+        return u.isHasTeam();
     }
 
     public Team getTeamInfoByID(String id) {
@@ -92,6 +87,36 @@ public class TeamService {
     }
     public Team getTeamInfoByName(String teamName) {
     	return teamRepository.findTeamByName(teamName).orElse(null);
+    }
+
+    public Team getTeamByMemberIDService(String memberID) {
+        User u;
+        for(Team t : teamRepository.findAll()) {
+            u=t.getTeamMembers().stream().filter((User e) -> e.getIdNumber().equals(memberID))
+                .findFirst()
+                .orElse(null);
+            if(u!=null)
+                return t;
+        }
+        return null;
+    }
+
+    @Transactional
+    public void deleteTeam(String teamID) {
+        Team team = teamRepository.findById(Integer.parseInt(teamID)).orElse(null);
+        if (team != null) {
+            List<User> teamMembersCopy = new ArrayList<>(team.getTeamMembers());
+            for (User user : teamMembersCopy) {
+                user.setHasTeam(false);
+                team.getTeamMembers().remove(user);
+            }
+            teamRepository.deleteById(Integer.parseInt(teamID));
+        }
+    }
+    @Transactional
+    public void updateTeam(String teamID, String memberID) {
+    	memberInfo.leaveTeam(memberID);
+    	teamRepository.findById(Integer.parseInt(teamID)).orElse(null).getTeamMembers().remove(memberInfo.findById(memberID).orElse(null));
     }
     
 }

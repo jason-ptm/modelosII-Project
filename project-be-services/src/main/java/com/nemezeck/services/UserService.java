@@ -26,9 +26,6 @@ public class UserService {
 		return userInfo.findById(userID).orElse(null);
 	}
 	
-	
-	
-
-	
+		
 
 }

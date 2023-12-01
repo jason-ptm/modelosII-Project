@@ -5,10 +5,12 @@ import java.util.LinkedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +22,7 @@ import com.nemezeck.services.TeamService;
 
 
 @RestController
+@RequestMapping(path="/team")
 public class TeamController {
 	
 	private final TeamService teamData;
@@ -32,7 +35,7 @@ public class TeamController {
 		this.rs = new ResponseStatus();
 	}
 	
-	@GetMapping("/team")
+	@GetMapping
 	public ResponseEntity<?> getTeamInfo(@RequestParam(name="teamid") String teamID) {
 		try {
 
@@ -57,7 +60,7 @@ public class TeamController {
 	}
 	
 
-	    @PostMapping("/createteams")
+	    @PostMapping
 	    public ResponseEntity<?> createTeams(@RequestParam(name="teamname") String teamName,
 				@RequestParam(name="studentid") String studentID) {
 	        
@@ -91,7 +94,7 @@ public class TeamController {
 			
 		}
 	    
-	    @PutMapping("/add-member")
+	    @PutMapping
 	    public ResponseEntity<?> addMember(@RequestParam(name="teamid") String teamID,
 				@RequestParam(name="studentid1") String studentID1) {
 	        
@@ -153,7 +156,82 @@ public class TeamController {
 				errorContent.put("error", "Internal Server Error: " + ex.getMessage());
 				return new ResponseEntity<>(errorContent, HttpStatus.INTERNAL_SERVER_ERROR );
 			}
-	}
+	}	
+	    
+	    @PutMapping("/update-team")
+	    public ResponseEntity<?> updateTeam(@RequestParam(name="teamid") String teamID,
+				@RequestParam(name="studentid1") String studentID1) {
+	        
+			try {
+				
+				if (teamID.trim().isEmpty() || teamID == null || studentID1.trim().isEmpty() || studentID1 == null) 
+					return new ResponseEntity<Object>(rs.ErrorContent(HttpStatus.BAD_REQUEST,"/update-team" ), HttpStatus.BAD_REQUEST );
+				
+				if(!teamData.isTeamIDValid(teamID))
+					return new ResponseEntity<>(rs.ErrorContent(HttpStatus.NOT_FOUND,"/add-members"), HttpStatus.NOT_FOUND );
+				
+				teamData.updateTeam(teamID, studentID1);
+				Team updatedTeam= teamData.getTeamInfoByID(teamID);
+					
+				if (updatedTeam != null)
+					return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
+				
+				return new ResponseEntity<>(rs.ErrorContent(HttpStatus.NOT_FOUND,"/update-team"), HttpStatus.NOT_FOUND );
 
+			}
+			catch(Exception ex) {
+				LinkedHashMap<String, Object> errorContent = rs.ErrorContent(HttpStatus.INTERNAL_SERVER_ERROR,"/update-team");
+				errorContent.put("error", "Internal Server Error: " + ex.getMessage());
+				return new ResponseEntity<>(errorContent, HttpStatus.INTERNAL_SERVER_ERROR );
+			}
+	}   
+	    @DeleteMapping
+	    public ResponseEntity<?> deleteTeam(@RequestParam(name="teamid") String teamID) {
+	        
+			try {
+				
+				if (teamID.trim().isEmpty() || teamID == null ) 
+					return new ResponseEntity<Object>(rs.ErrorContent(HttpStatus.BAD_REQUEST,"/delete-team" ), HttpStatus.BAD_REQUEST );
+				
+	
+				teamData.deleteTeam(teamID);
+				Team updatedTeam= teamData.getTeamInfoByID(teamID);
+					
+				if (updatedTeam == null)
+					return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
+				
+				return new ResponseEntity<>(rs.ErrorContent(HttpStatus.NOT_FOUND,"/delete-team"), HttpStatus.NOT_FOUND );
+
+			}
+			catch(Exception ex) {
+				LinkedHashMap<String, Object> errorContent = rs.ErrorContent(HttpStatus.INTERNAL_SERVER_ERROR,"/delete-team");
+				errorContent.put("error", "Internal Server Error: " + ex.getMessage());
+				return new ResponseEntity<>(errorContent, HttpStatus.INTERNAL_SERVER_ERROR );
+			}
+	}   
+
+	@GetMapping("/team-by-member")
+        public ResponseEntity<?> getTeamByMemberID(@RequestParam(name="studentid") String studentID) {
+            try {
+
+
+                if (studentID.trim().isEmpty() || studentID == null) 
+                    return new ResponseEntity<Object>(rs.ErrorContent(HttpStatus.BAD_REQUEST,"/add-members" ), HttpStatus.BAD_REQUEST );
+
+
+                Team updatedTeam=teamData.getTeamByMemberIDService(studentID);
+
+                if (updatedTeam != null)
+                    return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
+
+                return new ResponseEntity<>(rs.ErrorContent(HttpStatus.NOT_FOUND,"/add-members"), HttpStatus.NOT_FOUND );
+
+            }
+            catch(Exception ex) {
+                LinkedHashMap<String, Object> errorContent = rs.ErrorContent(HttpStatus.INTERNAL_SERVER_ERROR,"/add-members");
+                errorContent.put("error", "Internal Server Error: " + ex.getMessage());
+                return new ResponseEntity<>(errorContent, HttpStatus.INTERNAL_SERVER_ERROR );
+            }
+        }
 
 }

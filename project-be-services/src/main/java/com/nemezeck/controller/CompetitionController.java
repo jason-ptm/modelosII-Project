@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,7 @@ import com.nemezeck.services.TeamService;
 import com.nemezeck.config.ResponseStatus;
 
 @RestController
+@RequestMapping(path="/competition")
 public class CompetitionController {
 	private final CompetitionService compData;
 	private final ResponseStatus rs;
@@ -30,7 +32,7 @@ public class CompetitionController {
 		this.rs = new ResponseStatus();
 	}
 	
-	@GetMapping("/competition")
+	@GetMapping
 	public ResponseEntity<?> getTeamInfo(@RequestParam(name="compid") String compID) {
 		try {
 
@@ -54,7 +56,7 @@ public class CompetitionController {
 		}
 	}
 	
-	@PostMapping("/createcomp")
+	@PostMapping
 	public ResponseEntity<?> createComp(@RequestParam(name="compname") String compName,
 			@RequestParam(name="compcategory") String compCategory) {
 		try {
@@ -83,7 +85,7 @@ public class CompetitionController {
 		return null;
 	}
 	
-	@PutMapping("/enroll-team")
+	@PutMapping
 	public ResponseEntity<?> enrollTeamToCompetition(@RequestParam(name="teamname") String teamName,
 			@RequestParam(name="compname") String compName) {
 		try {
@@ -121,12 +123,10 @@ public class CompetitionController {
 			if (compCategory.trim().isEmpty() || compCategory == null) 
 				return new ResponseEntity<Object>(rs.ErrorContent(HttpStatus.BAD_REQUEST,"/competition-category" ), HttpStatus.BAD_REQUEST );
 			
-			
 			Competition comp= compData.getAllCompetitionsByCategory(compCategory);
 			
 			if (comp != null)
 				return new ResponseEntity<>(comp, HttpStatus.OK);
-			
 			
 			return new ResponseEntity<>(rs.ErrorContent(HttpStatus.NOT_FOUND,"/competition-category"), HttpStatus.NOT_FOUND );
 		}
@@ -136,4 +136,5 @@ public class CompetitionController {
 			return new ResponseEntity<>(errorContent, HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
+	
 }

@@ -9,9 +9,11 @@ import Paper from '@mui/material/Paper'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import SideBar from '../SideBar'
 import { roleTypes } from '../../utils/constants/states'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux/store'
 
 interface IWrapperProps {
   children: any
@@ -44,9 +46,14 @@ const AppBar = styled(MuiAppBar, {
 
 const Wrapper: FC<IWrapperProps> = ({ children, role }) => {
   const [open, setOpen] = useState(true)
+  const { loading } = useSelector((state: RootState) => state.student)
   const toggleDrawer = () => {
     setOpen(!open)
   }
+
+  useEffect(() => {
+    console.log('🚀 ~ file: Wrapper.tsx:57 ~ loading:', loading)
+  }, [loading])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -94,7 +101,7 @@ const Wrapper: FC<IWrapperProps> = ({ children, role }) => {
         }}
       >
         <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Container sx={{ mt: 4, mb: 4 }}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>

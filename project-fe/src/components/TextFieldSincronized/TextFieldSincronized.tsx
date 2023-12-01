@@ -7,7 +7,12 @@ import { RootState } from '../../redux/store'
 const TextFieldSincronized: FC<any> = (props) => {
   const { loading } = useSelector((state: RootState) => state.student)
 
-  return <TextField {...props} disabled={loading} />
+  return (
+    <TextField
+      {...props}
+      disabled={props.disabled ? props.disabled : loading}
+    />
+  )
 }
 
 export const ButtonSincronized: FC<any> = (props) => {

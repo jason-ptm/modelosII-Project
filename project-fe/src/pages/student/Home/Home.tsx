@@ -1,22 +1,29 @@
+import { Box, Button, Typography } from '@mui/material'
 import { FC, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import TeamItemList from '../../../components/TeamItemList'
-import { Box, Typography } from '@mui/material'
-import { useSelector } from 'react-redux'
+import { getTeamById, redirectRoute } from '../../../redux/slice/studentReducer'
 import { RootState } from '../../../redux/store'
-import { useDispatch } from 'react-redux'
-import { getTeamById } from '../../../redux/slice/studentReducer'
+import { studentPath } from '../../../utils/constants/paths'
 
 interface IHomeProps {}
 
 const Home: FC<IHomeProps> = () => {
   const dispatch = useDispatch()
-  const { selectedTeam, selectedStudent } = useSelector(
-    (state: RootState) => state.student
-  )
+  const params = useParams()
+  const { selectedStudent } = useSelector((state: RootState) => state.student)
 
-  useEffect(() => {
-    dispatch(getTeamById(selectedStudent.id))
-  }, [selectedStudent])
+  const handleRegister = () => {
+    dispatch(
+      redirectRoute({
+        url: `${studentPath}/${params.id}/team`,
+        state: {
+          isCreated: false,
+        },
+      })
+    )
+  }
 
   return (
     <Box
@@ -29,10 +36,23 @@ const Home: FC<IHomeProps> = () => {
         width: '100%',
       }}
     >
-      <Typography variant="h4" align="center">
-        {'Equipo'}
-      </Typography>
-      <TeamItemList team={selectedTeam} showEditButton />
+      {selectedStudent.team?.members.filter((member) => member.id).length ? (
+        <>
+          <Typography fontSize={40} fontWeight={700} align="center">
+            {`Equipo ${selectedStudent.team?.name}`}
+          </Typography>
+          <TeamItemList team={selectedStudent.team} showEditButton />
+        </>
+      ) : (
+        <>
+          <Typography fontSize={40} fontWeight={700} align="center">
+            {'No hay equipo'}
+          </Typography>
+          <Button variant="contained" onClick={handleRegister}>
+            Registrar equipo
+          </Button>
+        </>
+      )}
     </Box>
   )
 }

@@ -27,7 +27,7 @@ public class Team {
     private String teamName;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="fk_team_id", referencedColumnName = "team_id")
+    @JoinColumn(name="fk_team_id", referencedColumnName = "team_id", updatable=true)
     private List<User> teamMembers = new ArrayList<>();
 
     private boolean isEnrolled;

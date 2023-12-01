@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-ProjectBeServicesApplication<project-be-services>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.nemezeck.projectbeservices.ProjectBeServicesApplication",
+      "projectName": "project-be-services",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=34267 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=project-be-services"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-ProjectBe2Application<project-be-services>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.nemezeck.projectbe2.ProjectBe2Application",
+      "projectName": "project-be-services",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

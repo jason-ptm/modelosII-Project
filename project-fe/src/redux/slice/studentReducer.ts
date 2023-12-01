@@ -1,16 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { Team } from '../../model/Team'
 import { StudentState } from '../../model/states'
 import {
   errorInitialState,
+  initialTeamState,
   studentInitialState,
 } from '../../utils/constants/states'
-import { Student } from '../../model/student'
-
-const initialTeamState: Student[] = [
-  { id: '', name: '', semester: 0, grade: '' },
-  { id: '', name: '', semester: 0, grade: '' },
-  { id: '', name: '', semester: 0, grade: '' },
-]
 
 const initialState: StudentState = {
   loading: false,
@@ -59,7 +54,20 @@ const studentSlice = createSlice({
       return {
         ...state,
         loading: true,
-        selectedTeam: action.payload,
+        selectedStudent: {
+          ...state.selectedStudent,
+          team: action.payload,
+        },
+      }
+    },
+    registerTeamSuccess: (state, action): StudentState => {
+      return {
+        ...state,
+        loading: false,
+        selectedStudent: {
+          ...state.selectedStudent,
+          team: action.payload,
+        },
       }
     },
     getTeamById: (state, _action): StudentState => {
@@ -75,12 +83,6 @@ const studentSlice = createSlice({
         selectedTeam: action.payload,
       }
     },
-    registerTeamSuccess: (state): StudentState => {
-      return {
-        ...state,
-        loading: false,
-      }
-    },
     registerTeamError: (state, action): StudentState => {
       return {
         ...state,
@@ -88,10 +90,33 @@ const studentSlice = createSlice({
         error: action.payload,
       }
     },
-    editTeamById: (state, _action): StudentState => {
+    editTeam: (state, action): StudentState => {
       return {
         ...state,
         loading: true,
+        selectedStudent: {
+          ...state.selectedStudent,
+          team: {
+            ...state.selectedStudent.team,
+            ...action.payload,
+          },
+        },
+      }
+    },
+    editTeamSuccess: (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        selectedStudent: {
+          ...state.selectedStudent,
+          team: action.payload,
+        },
+      }
+    },
+    editTeamError: (state, ADMIN_COMPETITIONaction) => {
+      return {
+        ...state,
+        loading: false,
       }
     },
     getCompetitions: (state): StudentState => {
@@ -103,9 +128,36 @@ const studentSlice = createSlice({
     getCompetitionsSuccess: (state, action): StudentState => {
       return {
         ...state,
+        loading: false,
         competititons: action.payload,
       }
     },
+    getCompetitionsError: (state): StudentState => {
+      return {
+        ...state,
+        loading: false,
+      }
+    },
+    getCompetitionsByCategory: (state, _action): StudentState => {
+      return {
+        ...state,
+        loading: true,
+      }
+    },
+    getCompetitionsByCategorySuccess: (state, action): StudentState => {
+      return {
+        ...state,
+        loading: false,
+        competititons: action.payload,
+      }
+    },
+    getCompetitionsByCategoryError: (state): StudentState => {
+      return {
+        ...state,
+        loading: false,
+      }
+    },
+
     joinCompetition: (state, _action): StudentState => {
       return {
         ...state,
@@ -150,8 +202,13 @@ export const {
   registerTeam,
   registerTeamSuccess,
   registerTeamError,
+  editTeam,
   getCompetitions,
   getCompetitionsSuccess,
+  getCompetitionsError,
+  getCompetitionsByCategory,
+  getCompetitionsByCategorySuccess,
+  getCompetitionsByCategoryError,
   joinCompetition,
   joinCompetitionSuccess,
   resetStudent,
