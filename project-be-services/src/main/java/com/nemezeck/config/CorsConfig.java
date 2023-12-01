@@ -49,6 +49,17 @@ public class CorsConfig {
                     .allowedMethods("GET")
                     .allowedHeaders("*")
                     .allowCredentials(true);
+				registry.addMapping("/team/team-all")
+                    .allowedOrigins("http://localhost:3000")
+                    .allowedMethods("GET")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
+				registry.addMapping("/competition/competition-all")
+                    .allowedOrigins("http://localhost:3000")
+                    .allowedMethods("GET")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
+                    
         
             }
         };

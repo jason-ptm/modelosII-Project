@@ -1,5 +1,6 @@
 package com.nemezeck.repository;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,5 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
 	Optional<Competition> findCompByName(@Param("val")String compName);
 	
 	@Query(value="SELECT c FROM Competition c WHERE c.compCategory=:val")
-	Optional<Competition> findCompByCategory(@Param("val")int compName);
+	ArrayList<Competition> findCompByCategory(@Param("val")int compCategory);
 }

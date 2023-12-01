@@ -21,7 +21,7 @@ const adminSlice = createSlice({
   name: 'admin',
   initialState,
   reducers: {
-    getCompetitions: (state, _action): AdminState => {
+    getCompetitions: (state): AdminState => {
       return {
         ...state,
         loading: true,
@@ -46,7 +46,7 @@ const adminSlice = createSlice({
         loading: true,
       }
     },
-    createCompetitionSuccess: (state, action): AdminState => {
+    createCompetitionSuccess: (state): AdminState => {
       return {
         ...state,
         loading: false,

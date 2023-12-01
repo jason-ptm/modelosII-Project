@@ -182,6 +182,11 @@ const studentSlice = createSlice({
         },
       }
     },
+    notify: (state) => {
+      return {
+        ...state,
+      }
+    },
     redirectRoute: (state, action): StudentState => {
       return {
         ...state,
@@ -212,5 +217,6 @@ export const {
   joinCompetition,
   joinCompetitionSuccess,
   resetStudent,
+  notify,
   redirectRoute,
 } = studentSlice.actions

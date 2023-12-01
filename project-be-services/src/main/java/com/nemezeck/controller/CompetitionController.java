@@ -1,5 +1,6 @@
 package com.nemezeck.controller;
-
+import java.util.List;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +124,7 @@ public class CompetitionController {
 			if (compCategory.trim().isEmpty() || compCategory == null) 
 				return new ResponseEntity<Object>(rs.ErrorContent(HttpStatus.BAD_REQUEST,"/competition-category" ), HttpStatus.BAD_REQUEST );
 			
-			Competition comp= compData.getAllCompetitionsByCategory(compCategory);
+			ArrayList<Competition> comp= compData.getAllCompetitionsByCategory(compCategory);
 			
 			if (comp != null)
 				return new ResponseEntity<>(comp, HttpStatus.OK);
@@ -136,5 +137,24 @@ public class CompetitionController {
 			return new ResponseEntity<>(errorContent, HttpStatus.INTERNAL_SERVER_ERROR );
 		}
 	}
+		@GetMapping("/competition-all")
+	public ResponseEntity<?> getAllComps() {
+		try {
+
+			
+			List<Competition> comp= compData.getAllCompetitions();
+			
+			if (comp != null)
+				return new ResponseEntity<>(comp, HttpStatus.OK);
+			
+			return new ResponseEntity<>(rs.ErrorContent(HttpStatus.NOT_FOUND,"/competition-category"), HttpStatus.NOT_FOUND );
+		}
+		catch(Exception ex) {
+			LinkedHashMap<String, Object> errorContent = rs.ErrorContent(HttpStatus.INTERNAL_SERVER_ERROR,"/competition-category");
+			errorContent.put("error", "Internal Server Error: " + ex.getMessage());
+			return new ResponseEntity<>(errorContent, HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+	}
+	
 	
 }

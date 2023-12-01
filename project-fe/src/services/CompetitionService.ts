@@ -2,8 +2,17 @@ import { apiBaseUrl } from '../utils/constants/api'
 import ApiService from './api'
 
 export default class CompetitionService extends ApiService {
+  createCompetition = async (name: string, category: number) => {
+    const { data } = await this.axios.post(
+      `${apiBaseUrl}/competition?compname=${name}&compcategory=${category}`
+    )
+    return data
+  }
+
   getCompetitions = async () => {
-    const { data } = await this.axios.get(`${apiBaseUrl}/competition`)
+    const { data } = await this.axios.get(
+      `${apiBaseUrl}/competition/competition-all`
+    )
     return data
   }
 

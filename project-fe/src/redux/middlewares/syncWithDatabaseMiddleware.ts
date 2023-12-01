@@ -2,9 +2,9 @@ import { Middleware } from '@reduxjs/toolkit'
 import StudentService from '../../services/StudentService'
 import TeamService from '../../services/TeamService'
 import { getStudentAdapter } from '../../utils/adapter'
-import paths, { studentPath } from '../../utils/constants/paths'
+import paths, { adminPath, studentPath } from '../../utils/constants/paths'
 import {
-  getCompetitionsSuccess,
+  getCompetitionsByCategorySuccess,
   getStudentByIdSuccess,
   joinCompetitionSuccess,
   redirectRoute,
@@ -14,12 +14,20 @@ import {
 } from '../slice/studentReducer'
 import { getTeamAdapter } from '../../utils/adapter/TeamAdapter'
 import CompetitionServiceProxy from '../../utils/proxy/CompetitionServiceProxy'
+import CompetitionService from '../../services/CompetitionService'
+import { getCompetitionsAdapter } from '../../utils/adapter/CompetitionAdapter'
+import {
+  createCompetitionSuccess,
+  getCompetitions,
+  getCompetitionsSuccess,
+} from '../slice/adminReducer'
 
 export const syncWithDatabaseMiddleware: Middleware =
   (store) => (next) => async (action) => {
     const { type, payload } = action
     const studentService = new StudentService()
     const teamService = new TeamService()
+    const competitionService = new CompetitionService()
 
     next(action)
 
@@ -90,9 +98,12 @@ export const syncWithDatabaseMiddleware: Middleware =
       }
     } else if (type === 'student/getCompetitionsByCategory') {
       try {
-        console.log(
-          '🚀 ~ file: syncWithDatabaseMiddleware.ts:90 ~ type:',
+        const competitions = await competitionService.getCompetitionsByCategory(
           payload
+        )
+
+        store.dispatch(
+          getCompetitionsByCategorySuccess(getCompetitionsAdapter(competitions))
         )
       } catch (e: any) {
         console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:154 ~ e:', e)
@@ -106,6 +117,30 @@ export const syncWithDatabaseMiddleware: Middleware =
         competitionService.joinCompetition()
       } catch (e: any) {
         console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:160 ~ e:', e)
+      }
+    } else if (type === 'admin/getCompetitions') {
+      try {
+        const competitions = await competitionService.getCompetitions()
+
+        store.dispatch(
+          getCompetitionsSuccess(getCompetitionsAdapter(competitions))
+        )
+      } catch (e: any) {
+        console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:118 ~ e:', e)
+      }
+    } else if (type === 'admin/createCompetition') {
+      try {
+        competitionService.createCompetition(payload.name, payload.level)
+
+        store.dispatch(createCompetitionSuccess())
+        store.dispatch(getCompetitions())
+        store.dispatch(
+          redirectRoute({
+            url: `admin/12345/${paths.ADMIN_COMPETITIONS.slug}`,
+          })
+        )
+      } catch (e: any) {
+        console.log('🚀 ~ file: syncWithDatabaseMiddleware.ts:118 ~ e:', e)
       }
     }
   }

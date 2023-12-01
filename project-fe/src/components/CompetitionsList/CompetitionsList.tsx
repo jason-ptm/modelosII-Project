@@ -9,7 +9,7 @@ import {
   Grid,
   Typography,
 } from '@mui/material'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import BackgroundImage1 from '../../assets/competition1.jpg'
 import BackgroundImage2 from '../../assets/competition2.jpg'
@@ -17,7 +17,6 @@ import BackgroundImage3 from '../../assets/competition3.jpg'
 import BackgroundImage4 from '../../assets/competition4.jpg'
 import BackgroundImage5 from '../../assets/competition5.jpg'
 import {
-  getCompetitions,
   getCompetitionsByCategory,
   joinCompetition,
   redirectRoute,
@@ -26,15 +25,22 @@ import { RootState } from '../../redux/store'
 import './style/index.css'
 import { useParams } from 'react-router-dom'
 import AddIcon from '@mui/icons-material/Add'
+import { getCompetitions } from '../../redux/slice/adminReducer'
+import { Competition } from '../../model/Competition'
 
 interface ICompetitionsListProps {}
 
 const CompetitionsList: FC<ICompetitionsListProps> = () => {
   const dispatch = useDispatch()
   const params = useParams()
-  const { competititons, selectedStudent } = useSelector(
+  const { competititons: competitionsStudent, selectedStudent } = useSelector(
     (state: RootState) => state.student
   )
+  const { competitions: competitionsAdmin } = useSelector(
+    (state: RootState) => state.admin
+  )
+
+  const [competitions, setCompetitions] = useState<Competition[]>([])
 
   useEffect(() => {
     if (params.id && selectedStudent.team) {
@@ -47,8 +53,17 @@ const CompetitionsList: FC<ICompetitionsListProps> = () => {
       }
       dispatch(getCompetitionsByCategory(lowestLevel))
     } else if (params.adminId) {
+      dispatch(getCompetitions())
     }
   }, [])
+
+  useEffect(() => {
+    if (params.adminId) {
+      setCompetitions(competitionsAdmin)
+    } else {
+      setCompetitions(competitionsStudent)
+    }
+  }, [competitionsAdmin, competitionsStudent])
 
   const getRandomBackground = () => {
     const images = [
@@ -106,7 +121,7 @@ const CompetitionsList: FC<ICompetitionsListProps> = () => {
         </Typography>
       </Box>
       <Grid container spacing={4} sx={{ marginTop: '20px' }}>
-        {competititons.map((competition, index) => (
+        {competitions.map((competition, index) => (
           <Grid item key={index} xs={12} sm={6} md={4}>
             <Card
               sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
@@ -124,16 +139,17 @@ const CompetitionsList: FC<ICompetitionsListProps> = () => {
                 </Typography>
                 <Typography>{competition.level}</Typography>
               </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  variant="contained"
-                  // disabled={}
-                  onClick={() => handleClick(competition.id)}
-                >
-                  {!params.adminId ? 'Inscribirse' : 'Editar'}
-                </Button>
-              </CardActions>
+              {!params.adminId && (
+                <CardActions>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={() => handleClick(competition.id)}
+                  >
+                    Inscribirse
+                  </Button>
+                </CardActions>
+              )}
             </Card>
           </Grid>
         ))}

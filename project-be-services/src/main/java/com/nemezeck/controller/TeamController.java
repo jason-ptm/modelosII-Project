@@ -1,6 +1,7 @@
 package com.nemezeck.controller;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nemezeck.config.ResponseStatus;
+import com.nemezeck.model.Competition;
 import com.nemezeck.model.Team;
 import com.nemezeck.repository.TeamRepository;
 
@@ -234,4 +236,22 @@ public class TeamController {
             }
         }
 
+		@GetMapping("/team-all")
+	public ResponseEntity<?> getAllComps() {
+		try {
+
+			
+			List<Team> comp= teamData.getAllTeams();
+			
+			if (comp != null)
+				return new ResponseEntity<>(comp, HttpStatus.OK);
+			
+			return new ResponseEntity<>(rs.ErrorContent(HttpStatus.NOT_FOUND,"/competition-category"), HttpStatus.NOT_FOUND );
+		}
+		catch(Exception ex) {
+			LinkedHashMap<String, Object> errorContent = rs.ErrorContent(HttpStatus.INTERNAL_SERVER_ERROR,"/competition-category");
+			errorContent.put("error", "Internal Server Error: " + ex.getMessage());
+			return new ResponseEntity<>(errorContent, HttpStatus.INTERNAL_SERVER_ERROR );
+		}
+	}
 }

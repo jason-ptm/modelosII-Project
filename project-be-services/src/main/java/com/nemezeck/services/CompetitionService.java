@@ -1,10 +1,11 @@
 package com.nemezeck.services;
-
+import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.hibernate.mapping.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -107,7 +108,12 @@ public class CompetitionService {
 	
 	}
 	
-	public Competition getAllCompetitionsByCategory(String compCategory) {
-		return compRepository.findCompByCategory(Integer.parseInt(compCategory)).orElse(null);
+	public ArrayList<Competition> getAllCompetitionsByCategory(String compCategory) {
+		return compRepository.findCompByCategory(Integer.parseInt(compCategory));
+	}
+	public List<Competition> getAllCompetitions(){
+		List<Competition> c= new ArrayList<>();
+		c= compRepository.findAll();
+		return c;
 	}
 }

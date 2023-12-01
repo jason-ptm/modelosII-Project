@@ -7,6 +7,7 @@ import { Team } from '../../model/Team'
 import { redirectRoute } from '../../redux/slice/studentReducer'
 import { studentPath } from '../../utils/constants/paths'
 import './styles/index.css'
+import DeleteIcon from '@mui/icons-material/Delete'
 import React from 'react'
 
 interface ITeamItemListProps {
@@ -99,9 +100,13 @@ const TeamItemList: FC<ITeamItemListProps> = ({ team, showEditButton }) => {
           )
         )}
       </Box>
-      {showEditButton && (
+      {showEditButton ? (
         <Button variant="contained" onClick={handleEditClick}>
           Editar
+        </Button>
+      ) : (
+        <Button variant="contained" color="error" startIcon={<DeleteIcon />}>
+          Delete
         </Button>
       )}
     </Box>

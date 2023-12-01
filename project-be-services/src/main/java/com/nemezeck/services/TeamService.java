@@ -1,6 +1,7 @@
 package com.nemezeck.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nemezeck.model.Competition;
 import com.nemezeck.model.Team;
 import com.nemezeck.model.User;
 import com.nemezeck.repository.PersonRepository;
@@ -118,5 +120,10 @@ public class TeamService {
     	memberInfo.leaveTeam(memberID);
     	teamRepository.findById(Integer.parseInt(teamID)).orElse(null).getTeamMembers().remove(memberInfo.findById(memberID).orElse(null));
     }
-    
+
+	public List<Team> getAllTeams(){
+		List<Team> c= new ArrayList<>();
+		c= teamRepository.findAll();
+		return c;
+	}
 }
